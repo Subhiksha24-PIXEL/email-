@@ -1,0 +1,329 @@
+{
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "Job Application ",
+        "formDescription": "To find out the suitable roles for the candidates through resume ",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Name ",
+              "placeholder": "Give name"
+            },
+            {
+              "fieldLabel": "Email ",
+              "fieldType": "email",
+              "placeholder": "Email"
+            },
+            {
+              "fieldLabel": "Mobile Number ",
+              "fieldType": "number",
+              "placeholder": "Mobile Number"
+            },
+            {
+              "fieldLabel": "Upload Reume",
+              "fieldType": "file",
+              "acceptFileTypes": ".pdf"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "cc123054-e2f4-42b2-9c5e-674d5e4bb93b",
+      "name": "On form submission",
+      "webhookId": "17ac12f2-e0d6-4fbe-91e8-fbb32c209188"
+    },
+    {
+      "parameters": {
+        "operation": "pdf",
+        "binaryPropertyName": "Upload_Reume",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        220,
+        0
+      ],
+      "id": "84885bd1-4e21-46c2-ad20-ec700c81dff0",
+      "name": "Extract from File"
+    },
+    {
+      "parameters": {
+        "text": "{ \n  \"type\": \"object\", \n  \"properties\": { \n    \"telephone\": { \n      \"type\": \"string\" \n    }, \n    \"city\": { \n      \"type\": \"string\" \n    }, \n    \"birthdate\": { \n      \"type\": \"string\" \n    }, \n    \"name\": { \n      \"type\": \"string\" \n    }, \n    \"email\": { \n      \"type\": \"string\" \n    }, \n    \"educational qualification\": { \n      \"type\": \"string\" \n    }, \n    \"job history\": { \n      \"type\": \"string\" \n    }, \n      \"skills\": { \n        \"type\": \"string\" \n      } \n  } \n}",
+        "schemaType": "manual",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.informationExtractor",
+      "typeVersion": 1.1,
+      "position": [
+        400,
+        -20
+      ],
+      "id": "22cec93c-38d3-447b-9a0c-d59af70ae404",
+      "name": "Information Extractor"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.0-flash",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        580,
+        200
+      ],
+      "id": "0382e6cb-62bf-4e7f-ae60-f6fc5b4d7458",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "7wU93KTceBVEBbct",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "\nYou are an expert extraction algorithm. \nOnly extract relevant information from the text. \nIf you do not know the value of an attribute asked to extract, you may omit the attribute's value. \nphone number should not contain '+' ",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        700,
+        -20
+      ],
+      "id": "6f085d4c-48e0-4ea5-8edb-4499e228c470",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "917820d5-e24f-44fa-88ba-a8ffb34b9381",
+              "name": "output",
+              "value": "={{ $json.output }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1060,
+        -20
+      ],
+      "id": "2d434892-7dc3-4538-b5db-2566fbe8d908",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "\nYou are an expert extraction algorithm. \nOnly extract relevant information from the text. \nIf you do not know the value of an attribute asked to extract, you may omit the attribute's value. \nphone number should not contain '+' ",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        1280,
+        -20
+      ],
+      "id": "da27e240-7e58-4e43-8b02-f24a8bedcf5b",
+      "name": "AI Agent1"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.0-flash",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        1420,
+        260
+      ],
+      "id": "d95a648d-a102-413c-b870-3a2764938888",
+      "name": "Google Gemini Chat Model1",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "7wU93KTceBVEBbct",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "\nYou are an expert extraction algorithm. \nOnly extract relevant information from the text. \nIf you do not know the value of an attribute asked to extract, you may omit the attribute's value. \nphone number should not contain '+' ",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        1640,
+        -20
+      ],
+      "id": "0c857a9c-b6af-40e8-a6b2-bf66d0b7c088",
+      "name": "AI Agent2"
+    },
+    {
+      "parameters": {
+        "sendTo": "subhiksha.k.ihub@snsgroups.com",
+        "subject": "Dear Candidate ",
+        "emailType": "text",
+        "message": "You've been selected for the next selection process ",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        2000,
+        -20
+      ],
+      "id": "7251fc18-147e-4649-89c7-05faf71d0ed4",
+      "name": "Gmail",
+      "webhookId": "f8efaaee-47e0-46bf-91ae-a0e5383ed1d9",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "RboZzoUQocCqbgVH",
+          "name": "Gmail account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Extract from File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from File": {
+      "main": [
+        [
+          {
+            "node": "Information Extractor",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Information Extractor",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Information Extractor": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "AI Agent2",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent1": {
+      "main": [
+        [
+          {
+            "node": "AI Agent2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent2": {
+      "main": [
+        [
+          {
+            "node": "Gmail",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "cac12135-3999-4596-ac6c-e936adcb5703",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "62ab073ef26ce09c215f2ae1c85c795e5a250b4e2dcafe77318fceb10074ae75"
+  },
+  "id": "ATS6qIHC0zCMrxVO",
+  "tags": []
+}
